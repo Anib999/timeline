@@ -18,12 +18,12 @@
                                             @endfor
                                     </select>
                                 </div>
-                                <div class="form-group check_in_request">
+                                <!-- <div class="form-group check_in_request">
                                     <input type="text" class="form-control" name="check_in_request_time" placeholder="Check In Time"  id="requestCheckIn" >
-                                </div>
-                                <div class="form-group check_out_request">
+                                </div> -->
+                                <!-- <div class="form-group check_out_request">
                                     <input type="text" class="form-control" name="check_out_request_time"  placeholder="Check Out Time" id="requestCheckOut">
-                                </div>
+                                </div> -->
                                 <div class="form-group">
                                     <textarea class="form-control" placeholder="describe request.." rows="1" cols="20" id="em_comment" name="em_comment" required="required"></textarea>
                                 </div>

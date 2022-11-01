@@ -313,7 +313,7 @@
 
                 setTimeout(function () {
                     msg_container.fadeOut();
-                    location.reload()
+                    // location.reload()
                 }, 2000);
             });
 
@@ -365,7 +365,7 @@
 
                 setTimeout(function () {
                     msg_container.fadeOut();
-                    location.reload()
+                    // location.reload()
                 }, 2000);
             });
 

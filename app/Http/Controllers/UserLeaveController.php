@@ -180,4 +180,9 @@ class UserLeaveController extends Controller {
         return $dates;
     }
 
+    public function ajaxLeaveApplicableByUserId(Request $request){
+        $usId = $request->get('usId');
+        $leaveCapables = LeaveApplicable::where('user_id', $usId)->with('leaveType')->orderBy('created_at', 'asc')->get();
+        return response()->json($leaveCapables);
+    }
 }

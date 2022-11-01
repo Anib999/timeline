@@ -34,6 +34,8 @@ class HomeController extends Controller {
 
     //    @if(Auth::user()->id == 1)
 
+        $this->checkLeaveSummary();
+
         $projects = Project::where('supervisor', '=', $user_id)
                 ->orderBy('created_at', 'asc')
                 ->get();
@@ -61,6 +63,11 @@ class HomeController extends Controller {
         
         return redirect()->back();
         
+    }
+
+    public function checkLeaveSummary() {
+        // 4
+        // var_dump('sadf');
     }
    
 

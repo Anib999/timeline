@@ -181,6 +181,11 @@ Route::group(['middleware' => ['auth']], function () {
         'uses' => 'ProjectController@removeProjectUsers',
         'as' => 'removeProjectUsers'
     ]);
+
+    Route::get('ajaxLeaveApplicableByUserId', [
+        'uses' => 'UserLeaveController@ajaxLeaveApplicableByUserId',
+        'as' => 'ajaxLeaveApplicableByUserId'
+    ]);
     //new added
 
 });

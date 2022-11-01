@@ -139,21 +139,44 @@ class AttendenceController extends Controller {
                 return response()->json(['message' => 'Cannot Check In before 7AM', 'date' => $now->format('Y-m-d')]);    
             }
 
-            $attendance->create([
-                'user_id' => $user_id,
-                'present' => $present,
-                'day' => $now->format('Y-m-d'),
-                'check_in' => $check_in,
-                'check_in_by' => $user_name,
-                'check_in_time' => $now->format('H:i:s'),
-                //'total_work_hour' => 1
-                //new added remarks
-                'checkin_remarks' => $request->get('allReasonField'),
-                'checkin_location' => $request->get('gMap'),
-            ]);
+            $isOverCheckInTime = $request->get('dl');
+            if($isOverCheckInTime == 1 || $isOverCheckInTime == 2){
+                $checkIfCheckedIn = $this->checkIfCheckIn($request);
+                if($checkIfCheckedIn['isRequestCheckedIn'] == 0 && $checkIfCheckedIn['isCheckedIn'] == 0){
+                    $checkInOutRequest = new AdminToEmployeeRequestForCheckInOut;
 
+                    $saved = $checkInOutRequest->create([
+                        'user_id' => $user_id,
+                        'day' => $check_in_day,
+                        'request_type' => 0,
+                        'check_in_request_time' => null,
+                        'em_comment' => $request->get('allReasonField')
+                    ]);
+                    if ($saved) {
+                        return response()->json(['message' => 'Your request successfully sent !']);
+                    } else {
+                        return response()->json(['message' => 'Your Request was not sent! try again.. ']);
+                    }
+                }else{
+                    return response()->json(['message' => 'You Have Already Sent Check In Request']);
+                }
+            }else{
 
-            return response()->json(['message' => 'You Have Checked In', 'date' => $now->format('Y-m-d')]);
+                $attendance->create([
+                    'user_id' => $user_id,
+                    'present' => $present,
+                    'day' => $now->format('Y-m-d'),
+                    'check_in' => $check_in,
+                    'check_in_by' => $user_name,
+                    'check_in_time' => $now->format('H:i:s'),
+                    //'total_work_hour' => 1
+                    //new added remarks
+                    'checkin_remarks' => $request->get('allReasonField'),
+                    'checkin_location' => $request->get('gMap'),
+                ]);
+                   
+                return response()->json(['message' => 'You Have Checked In', 'date' => $now->format('Y-m-d')]);
+            }
         } else {
             return response()->json(['message' => 'You Have Already Checked In']);
         }
@@ -441,21 +464,44 @@ class AttendenceController extends Controller {
                     $present = 2;
                 }
 
-                $attendance->create([
-                    'user_id' => $user_id,
-                    'present' => $present,
-                    'day' => $check_in_day,
-                    'check_in_by' => Auth::user()->name,
-                    'check_in' => $check_in,
-                    'check_in_time' => $now,
-                    //'total_work_hour' => 1
-                    'checkin_remarks' => $request->get('allReasonField'),
-                    'checkin_location' => $request->get('gMap'),
-                    'is_leave_auto' => $request->get('dl')
-                ]);
+                $isOverCheckInTime = $request->get('dl');
+                if($isOverCheckInTime == 1 || $isOverCheckInTime == 2){
+                    $checkIfCheckedIn = $this->checkIfCheckIn($request);
+                    if($checkIfCheckedIn['isRequestCheckedIn'] == 0 && $checkIfCheckedIn['isCheckedIn'] == 0){
+                        $checkInOutRequest = new AdminToEmployeeRequestForCheckInOut;
 
-
-                return response()->json(['message' => 'You Have Checked In', 'date' => $check_in_day]);
+                        $saved = $checkInOutRequest->create([
+                            'user_id' => $user_id,
+                            'day' => $check_in_day,
+                            'request_type' => 0,
+                            'check_in_request_time' => null,
+                            'em_comment' => $request->get('allReasonField')
+                        ]);
+                        if ($saved) {
+                            return response()->json(['message' => 'Your request successfully sent !']);
+                        } else {
+                            return response()->json(['message' => 'Your Request was not sent! try again.. ']);
+                        }
+                    }else{
+                        return response()->json(['message' => 'You Have Already Sent Check In Request']);
+                    }
+                }else{
+                    $attendance->create([
+                        'user_id' => $user_id,
+                        'present' => $present,
+                        'day' => $check_in_day,
+                        'check_in_by' => Auth::user()->name,
+                        'check_in' => $check_in,
+                        'check_in_time' => $now,
+                        //'total_work_hour' => 1
+                        'checkin_remarks' => $request->get('allReasonField'),
+                        'checkin_location' => $request->get('gMap'),
+                        'is_leave_auto' => $request->get('dl')
+                    ]); 
+                
+                
+                    return response()->json(['message' => 'You Have Checked In', 'date' => $check_in_day]);
+                }
             } else {
                 return response()->json(['message' => 'You Have Already Checked In']);
             }
@@ -546,6 +592,24 @@ class AttendenceController extends Controller {
         } else {
             return response()->json(['message' => 'You Have Already Checked Out']);
         }
+    }
+
+    public function checkIfCheckIn(Request $request) {
+        $user_id = Auth::user()->id;
+
+        $now = Carbon::now('GMT+5:45');
+        $request_day = $request->get('attendance_date');
+
+        $checkInOutRequest = new AdminToEmployeeRequestForCheckInOut;
+        $attendance = new Attendence;
+
+        $already_send_request_check_in = $checkInOutRequest->where('user_id', $user_id)
+                        ->where('day', $request_day)->count();
+
+        $already_checkIn = $attendance->where('user_id', $user_id)
+                        ->where('day', $request_day)->count();
+
+        return array('isRequestCheckedIn' => $already_send_request_check_in, 'isCheckedIn' => $already_checkIn);
     }
 
 }

@@ -191,6 +191,12 @@
                     </div> 
                 </div>
                 <div class="row">
+                    <div class="col-md-12">
+                        <label for="">Leave Summary</label>
+
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-8 col-md-offset-2">
                         <form action="{{route('leave.leaveRequestAction')}}" method="POST">
                             {{ csrf_field()}}
@@ -293,6 +299,28 @@
                                             <input type='text' class="form-control" id="checkOutTime" name="checkOutTime" required="required"  >
                                         </div>
                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="isLeaveGiven" class=" control-label col-md-2  text-nowrap"> Leave Add :</label>
+                                    <div class="col-md-4">
+                                        <select name="isLeaveGiven" id="isLeaveGiven" class="form-control">
+                                            <option value="0">No Leave</option>
+                                            <option value="3">Full Leave</option>
+                                            <option value="1">First Leave</option>
+                                            <option value="2">Second Leave</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row leaveGivenRow" style="display: none;">
+                                    <label for="reasonLeave" class=" control-label col-md-2  text-nowrap"> Reason :</label>
+                                    <div class="col-md-4">
+                                        <select name="reasonLeave" id="reasonLeave" class="form-control">
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -420,6 +448,46 @@
         $('#checkInOutReject').attr('action',checkInOutActionUrl.replace('@id@',requestJson.user_id));
         modal_.modal('show');
     });
+
+    $('#isLeaveGiven').on('change', function(e){
+        const UID = $('#requestCinCoutPost input[name="user_id"]').val()
+        $('#reasonLeave').empty()
+        $('.leaveGivenRow').hide()
+        if(this.value != 0){
+            loadNewData(UID)
+        }
+    })
+
+    async function loadNewData(usId) {
+        const res = await ajaxLeaveApplicableByUserId(usId);
+        let optionList = ''
+        if(res){
+            res.map(e => {
+                optionList += `<option value="${e?.leave_type?.id}|${e.id}|${e.remaining_days}|${e.leave_id}">${e?.leave_type?.type} (${e.remaining_days})</option>`
+            })
+            $('#reasonLeave').append(optionList)
+            $('.leaveGivenRow').show()
+        }
+    }
+
+    function ajaxLeaveApplicableByUserId(usId) {
+        return new Promise(resolve => {
+            $.ajax({
+                url: 'ajaxLeaveApplicableByUserId',
+                data: {usId: usId},
+                method: 'get',
+                dataType: 'json'
+            })
+            .done(res => resolve(res))
+            .fail(res => resolve(false))
+        })
+    }
+
+    $('#modal-checkInOut').on('hidden.bs.modal', function (e) {
+        $('#isLeaveGiven').val(0)
+        $('#reasonLeave').val('')
+        $('.leaveGivenRow').hide()
+    })
     
 })()
 </script>

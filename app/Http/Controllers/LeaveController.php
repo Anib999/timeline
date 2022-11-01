@@ -302,7 +302,7 @@ class LeaveController extends Controller {
         $leave_id = $request->get('leave_id');
 
         $leaveRequestVal = $request->get('leaveRequest');
-        // var_dump($leave_id, $leaveRequestVal, $request->get('leave_type_id'));exit;
+        var_dump($leave_id, $leaveRequestVal, $request->get('leave_type_id'));exit;
         switch ($leaveRequestVal) {
 
 
