@@ -162,9 +162,9 @@
                 if(checkInCon != 0){
                     $('#'+attendencesJson[i].day)
                     .addClass('text-attendence attendence overer')
-                    .attr('data-content',checkInCon == 2 ? 'First' : checkInCon == 3 ? 'Second' : '')
+                    .attr('data-content',checkInCon == 2 ? 'Half' : checkInCon == 3 ? 'Half' : '')
                     .attr('data-trigger','hover')
-                    .val(checkInCon == 2 ? 'F' : checkInCon == 3 ? 'S' : attendencesJson[i].total_work_hour + 1);
+                    .val(checkInCon == 2 ? 'HL' : checkInCon == 3 ? 'HL' : attendencesJson[i].total_work_hour + 1);
                 }
             }
 

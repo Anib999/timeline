@@ -149,6 +149,10 @@ a:hover, a:active, a:after, a:link{
     
 }
 
+.at-purple {
+    color: rgb(103, 58, 183);
+}
+
 .bharne-faram-wrapper tbody>tr>td,.bharne-faram-wrapper tbody>tr>th{
     padding: 2px;
     text-align: center;

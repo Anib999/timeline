@@ -80,7 +80,7 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
                             'status' => 1
                         ]);
                     }
-                    
+
                     $this->giveLeaveOnCheckInCheckOut($request);
 
                     return redirect()->back()->with('message', 'You Approve Check In Request');
@@ -174,6 +174,8 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
                             'createdBy' =>  Auth::user()->id,
                             'status' => 1
                         ]);
+
+                        $this->giveLeaveOnCheckInCheckOut($request);
                     }
                     return redirect()->back()->with('message', 'You Approve CheckIn/Out Request');
                     //                   return response()->json(['message' => 'You Approve Check in/Out Request', 'date' => $requestDay]);
@@ -284,6 +286,8 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
         $user_id = $request->get('user_id');
         $user_name = Auth::user()->name;
         $inputAppTypes = $request->get('reasonLeave');
+        $isLeaveGiven = $request->get('isLeaveGiven');
+
         if ($inputAppTypes != '') {
 
             $value = explode('|', $inputAppTypes);
@@ -293,14 +297,15 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
             $leave_id = $value[3];
             $update = $leaveRequest->where('id', $leaveType_id)->get()->toArray();
 
-            $new_remaining_days = $currentDays - 1;
+            $removeDays = $isLeaveGiven == 1 || $isLeaveGiven == 2 ? 0.5 : 1;
+            $new_remaining_days = $currentDays - $removeDays;
 
             $newData = [
                 'user_id' => $user_id,
                 'leave_applicable_id' => $applicable_id,
                 'leave_type_id' => $leaveType_id,
                 'request_date' => $request->get('checkInOutday'),
-                'no_of_days' => 1, // half half full now
+                'no_of_days' => $removeDays, // half half full now
                 'from_date' => $request->get('checkInOutday'),
                 'to_date' => $request->get('checkInOutday'),
                 'remarks' => $request->get('ap_comment'),

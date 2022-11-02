@@ -192,8 +192,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <label for="">Leave Summary</label>
-
+                        <label for="">Leave Summary</label> <br />
+                        <label for="">Maturity Period: <span class="mat_period">0</span></label>
+                        <label for="">Leave Taken: <span class="lea_taken">0</span></label>
                     </div>
                 </div>
                 <div class="row">
@@ -389,7 +390,7 @@
     $('#leaveRequestTable').on('click','.leave-request-action',function(){
         var modal_ = $('#modal-leave');
         var requestJson = $(this).data('leaverequestjson');
-        console.log(requestJson);
+        // console.log(requestJson);
         modal_.find('.name').text(requestJson.users.name);
         modal_.find('.type').text(requestJson.leave_type.type);
         modal_.find('.request_date').text(requestJson.request_date);
@@ -405,6 +406,9 @@
         modal_.find('input[name="leave_type_id"]').val(requestJson.id);
         modal_.find('input[name="remaining_days"]').val($(this).attr('remaining-days'));
         modal_.find('input[name="request_days"]').val(requestJson.no_of_days);
+
+        //here keep maturity period
+        calculateMaturityPeriod(requestJson)
 
         modal_.modal('show');
     });
@@ -488,6 +492,30 @@
         $('#reasonLeave').val('')
         $('.leaveGivenRow').hide()
     })
+
+    async function calculateMaturityPeriod(requestJson={}) {
+        $('.mat_period').text(0)
+        $('.lea_taken').text(0)
+        
+        const res = await ajaxCheckLeaveSummary(requestJson);
+        if(res){
+            $('.mat_period').text(res.mp)
+            $('.lea_taken').text(res.lt)
+        }
+    }
+
+    function ajaxCheckLeaveSummary(requestJson = {}) {
+        return new Promise(resolve => {
+            $.ajax({
+                url: 'checkLeaveSummary',
+                data: {requestJson : JSON.stringify(requestJson)},
+                method: 'post',
+                dataType: 'json'
+            })
+            .done(res => resolve(res))
+            .fail(res => resolve(false))
+        })
+    }
     
 })()
 </script>

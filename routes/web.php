@@ -186,6 +186,11 @@ Route::group(['middleware' => ['auth']], function () {
         'uses' => 'UserLeaveController@ajaxLeaveApplicableByUserId',
         'as' => 'ajaxLeaveApplicableByUserId'
     ]);
+
+    Route::post('checkLeaveSummary', [
+        'uses' => 'HomeController@checkLeaveSummary',
+        'as' => 'checkLeaveSummary'
+    ]);
     //new added
 
 });
