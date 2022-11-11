@@ -58,7 +58,7 @@
                         <div class="col-md-6">
                             <div class="form-group {{ $errors->has('fromDate') ? ' has-error' : '' }}">
                                 <label for="fromDate"> From Date :</label>
-                                <input type="text" id="fromDate" name="fromDate" value="{{ old('fromDate')}}">
+                                <input type="text" id="fromDate" name="fromDate" value="{{ old('fromDate') ?? $project->fromDate }}">
                                 @if ($errors->has('fromDate'))
                                 <span class="help-block">
                                     <strong>{{ $errors->first('fromDate') }}</strong>
@@ -69,7 +69,7 @@
                         <div class="col-md-6">
                             <div class="form-group {{ $errors->has('toDate') ? ' has-error' : '' }}">
                                 <label for="toDate"> To Date  :</label>
-                                <input type="text" id="toDate" name="toDate" value="{{ old('toDate')}}"> 
+                                <input type="text" id="toDate" name="toDate" value="{{ old('toDate') ?? $project->toDate }}"> 
                                 @if ($errors->has('toDate'))
                                 <span class="help-block">
                                     <strong>{{ $errors->first('toDate') }}</strong>

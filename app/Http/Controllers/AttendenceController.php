@@ -138,6 +138,10 @@ class AttendenceController extends Controller {
             if($now->lessThan($sevenAm)){
                 return response()->json(['message' => 'Cannot Check In before 7AM', 'date' => $now->format('Y-m-d')]);    
             }
+            $employeeReason = str_replace(['"', "'"], "`", $request->get('allReasonField'));
+            $defaultTodayTime = Carbon::now()
+                                ->setTimezone('Asia/Kathmandu')
+                                ->toTimeString();
 
             $isOverCheckInTime = $request->get('dl');
             if($isOverCheckInTime == 1 || $isOverCheckInTime == 2){
@@ -149,8 +153,8 @@ class AttendenceController extends Controller {
                         'user_id' => $user_id,
                         'day' => $check_in_day,
                         'request_type' => 0,
-                        'check_in_request_time' => null,
-                        'em_comment' => $request->get('allReasonField')
+                        'check_in_request_time' => $defaultTodayTime,
+                        'em_comment' => $employeeReason
                     ]);
                     if ($saved) {
                         return response()->json(['message' => 'Your request successfully sent !']);
@@ -171,7 +175,7 @@ class AttendenceController extends Controller {
                     'check_in_time' => $now->format('H:i:s'),
                     //'total_work_hour' => 1
                     //new added remarks
-                    'checkin_remarks' => $request->get('allReasonField'),
+                    'checkin_remarks' => $employeeReason,
                     'checkin_location' => $request->get('gMap'),
                 ]);
                    
@@ -300,7 +304,9 @@ class AttendenceController extends Controller {
             }
         }
         //$holidayApplicableDay = $holidayApplicable->where('holidayDay', $request_day)->count();
-
+        $defaultTodayTime = Carbon::now()
+                                ->setTimezone('Asia/Kathmandu')
+                                ->toTimeString();
 
         if (in_array($request_day, $leaveDates)) {
 
@@ -321,7 +327,7 @@ class AttendenceController extends Controller {
                                 'user_id' => $user_id,
                                 'day' => $request_day,
                                 'request_type' => $request->get('request_type'),
-                                'check_in_request_time' => $request->get('check_in_request_time'),
+                                'check_in_request_time' => $request->get('check_in_request_time') != '' && $request->get('check_in_request_time') != null ? $request->get('check_in_request_time') : $defaultTodayTime,
                                 'em_comment' => $request->get('em_comment')
                             ]);
                         } else {
@@ -387,7 +393,7 @@ class AttendenceController extends Controller {
                                 'user_id' => $user_id,
                                 'day' => $request_day,
                                 'request_type' => $request->get('request_type'),
-                                'check_in_request_time' => $request->get('check_in_request_time'),
+                                'check_in_request_time' => $request->get('check_in_request_time') != '' && $request->get('check_in_request_time') != null ? $request->get('check_in_request_time') : $defaultTodayTime,
                                 'check_out_request_time' => $request->get('check_out_request_time'),
                                 'em_comment' => $request->get('em_comment')
                             ]);
@@ -465,6 +471,11 @@ class AttendenceController extends Controller {
                 }
 
                 $isOverCheckInTime = $request->get('dl');
+                $employeeReason = str_replace(['"', "'"], "`", $request->get('allReasonField'));
+                $defaultTodayTime = Carbon::now()
+                                ->setTimezone('Asia/Kathmandu')
+                                ->toTimeString();
+
                 if($isOverCheckInTime == 1 || $isOverCheckInTime == 2){
                     $checkIfCheckedIn = $this->checkIfCheckIn($request);
                     if($checkIfCheckedIn['isRequestCheckedIn'] == 0 && $checkIfCheckedIn['isCheckedIn'] == 0){
@@ -474,8 +485,8 @@ class AttendenceController extends Controller {
                             'user_id' => $user_id,
                             'day' => $check_in_day,
                             'request_type' => 0,
-                            'check_in_request_time' => null,
-                            'em_comment' => $request->get('allReasonField')
+                            'check_in_request_time' => $request->get('check_in_request_time') != '' && $request->get('check_in_request_time') != null ? $request->get('check_in_request_time') : $defaultTodayTime ,
+                            'em_comment' => $employeeReason
                         ]);
                         if ($saved) {
                             return response()->json(['message' => 'Your request successfully sent !']);
@@ -494,7 +505,7 @@ class AttendenceController extends Controller {
                         'check_in' => $check_in,
                         'check_in_time' => $now,
                         //'total_work_hour' => 1
-                        'checkin_remarks' => $request->get('allReasonField'),
+                        'checkin_remarks' => $employeeReason,
                         'checkin_location' => $request->get('gMap'),
                         'is_leave_auto' => $request->get('dl')
                     ]); 

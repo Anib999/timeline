@@ -36,6 +36,7 @@
                                             <th>
                                                 <span class="">User: </span>
                                                 <select name="" id="user_id">
+                                                <option value="0">All</option>
                                                 @foreach($allUserDetails as $uDet)
                                                     <option value="{{$uDet['id']}}">{{$uDet['username']}}</option>
                                                 @endforeach
@@ -65,6 +66,7 @@
                         <thead>
                             <tr>
                                 <th>Day</th>
+                                <th>Name</th>
                                 <th>Project</th>
                                 <th>Sub Category</th>
                                 <th>Work Details</th>

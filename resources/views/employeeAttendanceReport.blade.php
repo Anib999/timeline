@@ -36,6 +36,7 @@
                                             <th>
                                                 <span class="">User: </span>
                                                 <select name="" id="user_id">
+                                                <option value="0">All</option>
                                                 @foreach($allUserDetails as $uDet)
                                                     <option value="{{$uDet['id']}}">{{$uDet['username']}}</option>
                                                 @endforeach
@@ -66,6 +67,7 @@
                         <thead>
                             <tr>
                                 <th>Day</th>
+                                <th>Name</th>
                                 <th> Check In By</th>
                                 <th>Location</th>
                                 <th> Check In Time</th>
@@ -77,6 +79,7 @@
                             @foreach($user_attendances as $user_attendance)
                             <tr>
                                 <td>{{$user_attendance->day}}</td>
+                                <td>{{$user_attendance->name}}</td>
                                 <td>{{$user_attendance->check_in_by}}</td>
                                 <td>{{$user_attendance->checkin_location}}</td>
                                 <td>{{$user_attendance->check_in_time}}</td>
@@ -89,6 +92,7 @@
                         <thead>
                             <tr>
                                 <th> Day</th>
+                                <th>Name</th>
                                 <th> Check In By</th>
                                 <th>Location</th>
                             </tr>
@@ -97,6 +101,7 @@
                             @foreach($user_attendances as $user_attendance)
                             <tr>
                                 <td>{{$user_attendance->day}}</td>
+                                <td>{{$user_attendance->name}}</td>
                                 <td>{{$user_attendance->check_in_by}}</td>
                                 <td>
                                     {{$user_attendance->checkin_location}}

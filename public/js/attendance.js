@@ -115,10 +115,11 @@
             setTimeout(function () {
                 msg_container.fadeOut();
             }, 2000);
+        }else if(attCheck == 10){
+            withoutAdminCheckIn()
         }
         // else if(attCheck != 1){
         //     const comment = attCheck == 2 ? '&allReasonField=firsthalf' : (attCheck == 3 ? '&allReasonField=secondhalf' : '')
-        //     withoutAdminCheckIn(comment)
         // }
     });
 
@@ -276,16 +277,20 @@
             setTimeout(function () {
                 msg_container.fadeOut();
             }, 2000);
+        }else if(attCheck == 10){
+            attendanceCheckInFun(checkbox, '')
         }
         // else if(attCheck != 1){
         //     const comment = attCheck == 2 ? '&allReasonField=firsthalf' : (attCheck == 3 ? '&allReasonField=secondhalf' : '')
-        //     attendanceCheckInFun(checkbox, comment)
+        //     
         // }
     });
 
     function attendanceCheckInFun(checkbox, newRem='') {
         var status = checkbox.prop('checked');
-
+        const check_in_time = new Date();
+        const todayDate = check_in_time.toISOString().split('T')[0]
+        var calendar_val = $('#'+todayDate).val();
         $('#lateModal').modal('hide')
 
         var form = $('#checkIn');
@@ -299,31 +304,39 @@
         
         let fsLeave = `&dl=${$('#dl').val()}`
         
-        if (status) {
-            var response = $.ajax({
-                url: form.attr('action'),
-                method: 'post',
-                data: newRem != '' ? form.serialize()+newRem+positionConst+fsLeave : form.serialize()+positionConst
-            });
-
-            response.done(function (res) {
-                var msg_container = $('#checkin_sucess_message');
-                msg_container.text(res.message).show();
-                $('#' + res.date).val(1).css('color', 'green');
-
-                setTimeout(function () {
-                    msg_container.fadeOut();
-                    // location.reload()
-                }, 2000);
-            });
-
-            response.fail(function (res) {
-                var msg_container = $('#checkin_sucess_message');
-                msg_container.text(res.error).css('color', 'red').show();
-                setTimeout(function () {
-                    msg_container.fadeOut();
-                }, 2000);
-            });
+        if (calendar_val.trim() == '' || calendar_val.trim() == 'H') {
+            if (status) {
+                var response = $.ajax({
+                    url: form.attr('action'),
+                    method: 'post',
+                    data: newRem != '' ? form.serialize()+newRem+positionConst+fsLeave : form.serialize()+positionConst
+                });
+    
+                response.done(function (res) {
+                    var msg_container = $('#checkin_sucess_message');
+                    msg_container.text(res.message).show();
+                    $('#' + res.date).val(1).css('color', 'green');
+    
+                    setTimeout(function () {
+                        msg_container.fadeOut();
+                        // location.reload()
+                    }, 2000);
+                });
+    
+                response.fail(function (res) {
+                    var msg_container = $('#checkin_sucess_message');
+                    msg_container.text(res.error).css('color', 'red').show();
+                    setTimeout(function () {
+                        msg_container.fadeOut();
+                    }, 2000);
+                });
+            }
+        } else if(calendar_val.trim() == 'L'){
+            var msg_container = $('#checkin_sucess_message');
+            msg_container.text('This day is Your Leave day').css('color', 'red').show();
+            setTimeout(function () {
+                msg_container.fadeOut();
+            }, 2000);
         }
 
     }
@@ -502,6 +515,8 @@
 
         const fromSecondHalfLeave = newDateTime.setHours(12, 1, 0, 0);
         const toSecondHalfLeave = newDateTime.setHours(17, 0, 59, 0);
+
+        if(checkInDateTime >= toEarly && checkInDateTime < fromLate) return 10
 
         if(checkInDateTime <= fromEarly){
             return 4

@@ -9,7 +9,7 @@ use App\Attendence;
 use App\Notifications;
 use App\LeaveRequest;
 use App\LeaveApplicable;
-//use Carbon\Carbon;
+use Carbon\Carbon;
 
 class AdminToEmployeeRequestForCheckInOutController extends Controller
 {
@@ -29,6 +29,10 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
         $user_name = Auth::user()->name;
         $requestDay = $request->get('checkInOutday');
         $checkInOutRequest_id = $request->get('checkInOutRequest_id');
+
+        // $defaultTime = Carbon::now();
+        // var_dump($defaultTime);
+        // exit;
 
         $already_checkOut = $attendance->where('user_id', $user_id)
             ->where('day', $requestDay)->whereNotNull('check_out')->count();
@@ -296,6 +300,7 @@ class AdminToEmployeeRequestForCheckInOutController extends Controller
             $currentDays = $value[2];
             $leave_id = $value[3];
             $update = $leaveRequest->where('id', $leaveType_id)->get()->toArray();
+            
 
             $removeDays = $isLeaveGiven == 1 || $isLeaveGiven == 2 ? 0.5 : 1;
             $new_remaining_days = $currentDays - $removeDays;

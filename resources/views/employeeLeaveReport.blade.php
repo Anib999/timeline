@@ -39,6 +39,7 @@
                                                 <th>
                                                     <span class="">User: </span>
                                                     <select name="" id="user_id">
+                                                        <option value="0">All</option>
                                                     @foreach($allUserDetails as $uDet)
                                                         <option value="{{$uDet['id']}}">{{$uDet['username']}}</option>
                                                     @endforeach
@@ -65,6 +66,7 @@
                 <thead>
                     <tr>
                         <th>Request Day</th>
+                        <th>Name</th>
                         <th> No of Day</th>
                         <th> Start Date</th>
                         <th> End Date</th>
@@ -76,6 +78,7 @@
                     @foreach($user_leves as $user_leve)
                     <tr>
                         <td>{{$user_leve->request_date}}</td>
+                        <td>{{$user_leve->name}}</td>
                         <td>{{$user_leve->no_of_days}}</td>
                         <td>{{$user_leve->from_date}}</td>
                         <td>{{$user_leve->to_date}}</td>

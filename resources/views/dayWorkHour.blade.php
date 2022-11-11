@@ -108,7 +108,7 @@ $(function () {
                                     <select class="form-control" name="project_id" id="project" data-url="{{ url('api/projectdropdown')}}" required="required">
                                         <option> </option>
                                         @foreach($projects as $project)
-                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                        <option value="{{ $project->project_id }}">{{ $project->name }}</option>
                                         @endforeach
                                     </select>
                                     @if ($errors->has('project_id'))
@@ -151,7 +151,7 @@ $(function () {
                         <div class="form-group{{ $errors->has('workDetail') ? ' has-error' : '' }}">
                             <label  for="workDetail" class="col-md-4">Work Detail</label>
                             <div class="col-md-8">
-                                <select route="{{route('workDetailsAPI')}}" class="form-control" id="workDetail" name="workDetail" required >
+                                <select route="{{route('workDetailsAPI')}}" class="form-control" id="workDetail" name="workDetail" >
                                     <option value=""> </option>
                                 </select>
                                 @if ($errors->has('workDetail'))
@@ -240,7 +240,8 @@ $(function () {
             alert('Please select the User');
             return;
         }
-        if( isNaN(project) || isNaN(subCategory) || isNaN(workDetail) || workComment == '' || isNaN(workHour) || workHour < 0){
+        // || isNaN(workDetail)
+        if( isNaN(project) || isNaN(subCategory) || workComment == '' || isNaN(workHour) || workHour < 0){
             if(workHour < 0){
                 alert('Work Hour cannot be in negative.');
                 return;
@@ -248,7 +249,7 @@ $(function () {
             alert( 'These feild/s are empty: \n'+
                 ((isNaN(project))?'Project\n':'')+
                 ((isNaN(subCategory))?'Sub Category\n':'')+
-                ((isNaN(workDetail))?'Work Detail\n':'')+
+                // ((isNaN(workDetail))?'Work Detail\n':'')+
                 ((workComment == '')?'Comment\n':'')+
                 ((isNaN(workHour))?'Work Hour':'') );
             return;
@@ -413,6 +414,7 @@ $(function () {
             'workHour': delete_span.parents('tr').find('td.workHour-field').text(),
             'workDayDate': $('#workDayDate').val(),
             '_token': $('meta[name="csrf-token"]').attr('content'),
+            'userId': delete_span.attr('uid'),
         }
         var delete_selected_row = delete_span.parents('tr');
         var workHour = parseFloat(delete_selected_row.find('td.workHour-field').text());
@@ -498,8 +500,7 @@ $(function () {
             for(let i = 0; i < res.length; i++){
                 tableRows.push(
                     '<tr>'+
-                    '<td><span entryid="'+res[i].workEntryId
-+'" class="deleteTodaysWorkEntry-row text-warning">&times;</span></td>'+
+                    '<td><span entryid="'+res[i].workEntryId+'" uid="'+res[i].resUId+'" class="deleteTodaysWorkEntry-row text-warning">&times;</span></td>'+
                     '<td class="project-field" project="'+ res[i].projectId +'">'+ res[i].projectName +'</td>'+
                     '<td class="subCategory-field" subCategory="'+ res[i].subCategoryId +'">'+ res[i].subCategoryName +'</td>'+
                     '<td class="workDetail-field" workDetail="'+ res[i].workDetailId +'">'+ res[i].workDetailName +'</td>'+
@@ -530,7 +531,7 @@ $(function () {
     $('#user').on('change', async function(e){
         $('#project').empty()
         const res = await returnData(this.value)
-        let opti = ''
+        let opti = '<option value=""></option>'
         res.forEach((re, i) => {
             opti += `<option value="${re.id}">${re.name}</option>`
         })

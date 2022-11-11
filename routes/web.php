@@ -191,6 +191,11 @@ Route::group(['middleware' => ['auth']], function () {
         'uses' => 'HomeController@checkLeaveSummary',
         'as' => 'checkLeaveSummary'
     ]);
+
+    Route::post('changePassword/{uid}', [
+        'uses' => 'UserController@changePassword',
+        'as' => 'changePassword'
+    ]);
     //new added
 
 });

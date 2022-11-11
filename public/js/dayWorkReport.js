@@ -15,6 +15,7 @@ $(function () {
             {data: 'created_at', render: function(row, meta, data){
                 return row.split(' ')[0]
             }},
+            {data: 'name'},
             {data: '', render: function(row, meta, data){
                 return data?.projects?.name;
             }},

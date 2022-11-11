@@ -124,7 +124,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 leaveTimeCol" style="display: none;">
+                                <div class="col-md-4 leaveTimeCol">
                                     <div class="form-group{{ $errors->has('leaveTime') ? ' has-error' : '' }}">
                                         <label for="leaveTime">Leave Time :</label>
                                         <select class="form-control" id="leaveTime" name="leaveTime" required="required">

@@ -26,7 +26,11 @@
                     <div class="dropzone-previews" id="dropzonePreview"></div>
 
                     <input type="hidden" name="project_id" value="{{$findproduct->id}}">
-                    <h4 style="text-align: center;color:#428bca;">Drop or Select File/Image <br> <span class="glyphicon glyphicon-hand-up"></span></h4>
+                    <h4 style="text-align: center;color:#428bca;">
+                        <span class="glyphicon glyphicon-hand-up"></span>
+                        <br>
+                        Drop or Select File/Image above
+                    </h4>
                 </div>
 
                 <div class="col-md-12 form-inline">

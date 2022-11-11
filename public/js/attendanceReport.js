@@ -13,6 +13,7 @@ $(function () {
 
     let columnData = [
         {data: 'day'},
+        {data: 'name'},
         {data: 'check_in_by'},
         {data: 'checkin_location', render: function (row) {
             if(row != '' && row != null)

@@ -291,7 +291,7 @@
                                     <div class="checkInTime-container">
                                         <label for="checkInTime" class=" control-label col-md-2  text-nowrap"> Check In:</label>
                                         <div class="col-md-4">
-                                            <input type='text' class="form-control" id="checkInTime" name="checkInTime" required="required" >
+                                            <input type='text' class="form-control" id="checkInTime" name="checkInTime" required="required" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="checkOutTime-container">
@@ -333,9 +333,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-    <!--                                                        <div class="alert alert-success" id="cInOutmessage" style="display: none;">
-
-                                </div>  -->
+    <!-- <div class="alert alert-success" id="cInOutmessage" style="display: none;"></div>  -->
                                 <button type="submit" class="btn btn-default" id="requestCInOutSubmit" >Submit</button>
                             </div>
                         </div>

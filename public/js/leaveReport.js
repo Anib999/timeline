@@ -17,6 +17,7 @@ $(function () {
         ],
         columns: [
             {data: 'request_date'},
+            {data: 'name'},
             {data: 'no_of_days'},
             {data: 'from_date'},
             {data: 'to_date'},

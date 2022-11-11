@@ -118,7 +118,6 @@
 
     $('#leaveRequest').on('submit', function (e) {
         e.preventDefault();
-
         var response = $.ajax({
             url: $(this).attr('action'),
             method: 'post',
@@ -133,7 +132,7 @@
                 msg_container.fadeOut();
             }, 5000);
             if(res.stat != 0)
-                location.reload()
+                // location.reload()
             $('#leaveRequest')[0].reset();
 
             from_date.val(today.toLocaleDateString())
@@ -198,7 +197,7 @@
 
     function showHideDetails(paidStatus) {
         paidStatus == 1 ? $('.leaveDetailsCol').hide() : $('.leaveDetailsCol').show()
-        paidStatus == 1 ? $('.leaveTimeCol').hide() : $('.leaveTimeCol').show()
+        // paidStatus == 1 ? $('.leaveTimeCol').hide() : $('.leaveTimeCol').show()
     }
 
     //new

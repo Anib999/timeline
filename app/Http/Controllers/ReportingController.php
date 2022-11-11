@@ -50,7 +50,7 @@ class ReportingController extends Controller {
                             }else{
             $allUserDetails = User::get()->toArray();
         }
-        $user_attendances = Attendence::where('user_id', $user_id)->get();
+        $user_attendances = Attendence::where('user_id', $user_id)->leftJoin('users AS U', 'U.id', '=', 'attendences.user_id')->get();
 
         return view('employeeAttendanceReport', compact('user_attendances', 'setting', 'allUserDetails'));
     }
@@ -79,7 +79,11 @@ class ReportingController extends Controller {
 
 
 
-        $user_leves = LeaveRequest::where('user_id', $user_id)->where('status', 1)->get();
+        $user_leves = LeaveRequest::where('user_id', $user_id)
+                    ->leftJoin('users AS U', 'U.id', '=', 'leave_requests.user_id')
+                    ->select('leave_requests.*', 'U.name as name')
+                    ->where('status', 1)
+                    ->get();
         
         return view('employeeLeaveReport', compact('user_leves', 'allUserDetails'));
     }
@@ -109,6 +113,8 @@ class ReportingController extends Controller {
         }
 
         $user_dayWorks = DayWorkEntry::where('user_id', $user_id)
+                ->leftJoin('users AS U', 'U.id', '=', 'day_work_entries.user_id')
+                ->select('day_work_entries.*', 'U.name as name')
                 ->with('subCategories')
                 ->with('projects')
                 ->with('WorkDetails')
@@ -139,9 +145,17 @@ class ReportingController extends Controller {
         $fromDate = $request->get('datepicker_from');
         $toDate = $request->get('datepicker_to');
         $user_id = $request->get('user_id');
-
+        
+        // if($user_id != 0)
         $user_attendances = Attendence::whereBetween('day', [$fromDate, $toDate])
-                        ->where('user_id', $user_id)->get(['day', 'check_in_time', 'check_out_time', 'total_work_hour', 'check_in_by', 'checkin_location'])->toArray();
+                        ->when($user_id != 0, function ($query) use ($user_id) {
+                            $query->where('user_id',  $user_id);
+                        })
+                        ->leftJoin('users AS U', 'U.id', '=', 'attendences.user_id')
+                        ->get(
+                            ['day', 'check_in_time', 'check_out_time', 'total_work_hour', 'check_in_by', 'checkin_location', 'U.name']
+                        )
+                        ->toArray();
         return response()->json($user_attendances);
     }
 
@@ -153,14 +167,19 @@ class ReportingController extends Controller {
         // var_dump($fromDate, $toDate, $user_id);
 
         $user_attendances = LeaveRequest::whereBetween('from_date', [$fromDate, $toDate])
-                        ->where('user_id', $user_id)
+                        ->when($user_id != 0, function ($query) use ($user_id) {
+                            $query->where('user_id',  $user_id);
+                        })
+                        ->leftJoin('users AS U', 'U.id', '=', 'leave_requests.user_id')
+                        ->select('leave_requests.*', 'U.name as name')
                         ->get([
                             'request_date', 
                             'no_of_days', 
                             'from_date', 
                             'to_date', 
                             'aprove_by', 
-                            'ap_remarks'
+                            'ap_remarks',
+                            'U.name'
                         ])
                         ->toArray();
         return response()->json($user_attendances);
@@ -173,12 +192,32 @@ class ReportingController extends Controller {
         $user_id = $request->get('user_id');
         // var_dump($fromDate, $toDate, $user_id);
 
+        // $hideUserDetailField = array(
+        //     'user_id_new',
+        //     'updated_at',
+        //     'profile',
+        //     'email', 
+        //     'password', 
+        //     'address', 
+        //     'phone', 
+        //     'contactPerson',
+        //     'isAdmin',
+        //     'username', 
+        //     'date_of_join',
+        //     'remember_token',
+        // );
+
         $user_attendances = DayWorkEntry::whereBetween('workEntryDate', [$fromDate, $toDate])
-                        ->where('user_id', $user_id)
+                        ->when($user_id != 0, function ($query) use ($user_id) {
+                            $query->where('user_id',  $user_id);
+                        })
+                        ->leftJoin('users AS U', 'U.id', '=', 'day_work_entries.user_id')
+                        ->select('day_work_entries.*', 'U.name as name')
                         ->with('subCategories')
                         ->with('projects')
                         ->with('WorkDetails')
                         ->get()
+                        // ->makeHidden($hideUserDetailField)
                         ->toArray();
         return response()->json($user_attendances);
     }

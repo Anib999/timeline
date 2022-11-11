@@ -40,7 +40,6 @@ class UserLeaveController extends Controller {
             'remarks' => 'required'
         ]);
 
-        // var_dump($request);exit;
 
         $leaveRequest = new LeaveRequest;
         $user_id = Auth::user()->id;
@@ -58,11 +57,14 @@ class UserLeaveController extends Controller {
 
         $paid_unpaid_status = $request->get('paid_unpaid_status');
 
-        $remarks = $request->get('remarks');
+        $remarks = str_replace(['"', "'"], "`", $request->get('remarks'));
 
         //new leave details added
         $leaveDetails = $request->get('leaveDetails');
         $leaveTime = $request->get('leaveTime');
+        $totalLeaveDaysCut = 1;
+        if($leaveTime == 'first' || $leaveTime == 'second')
+            $totalLeaveDaysCut = 0.5;
         //new leave details added
 
         $periods = $this->generateDateRange(new carbon($from_date), new carbon($to_date));
@@ -80,7 +82,7 @@ class UserLeaveController extends Controller {
                $holiday_count = count($find_holidays);
             }
         }
-       $no_of_days = $no_of_days_between_from_and_to_date -$holiday_count;
+        $no_of_days = $no_of_days_between_from_and_to_date == 1 ? $totalLeaveDaysCut : ($no_of_days_between_from_and_to_date - $holiday_count);
 
         $already_send_leave_request = $leaveRequest->where('user_id', $user_id)
                                         //->where('request_date', $periods)
@@ -117,7 +119,8 @@ class UserLeaveController extends Controller {
                             'remarks' => $remarks,
                             'paid_unpaid_status' => $paid_unpaid_status,
                             'leave_details' => $paid_unpaid_status == 0 ? $leaveDetails : '',
-                            'leave_time' => $paid_unpaid_status == 0 ? $leaveTime : '',
+                            'leave_time' => $leaveTime ,
+                            // $paid_unpaid_status == 0 ? : ''
                         ]);
                         if (!$success) {
                             return response()->json(['message' => 'There was some error occured, while sending request', 'stat' => 0]);
@@ -140,7 +143,8 @@ class UserLeaveController extends Controller {
                         'remarks' => $remarks,
                         'paid_unpaid_status' => $paid_unpaid_status,
                         'leave_details' => $paid_unpaid_status == 0 ? $leaveDetails : '',
-                        'leave_time' => $paid_unpaid_status == 0 ? $leaveTime : '',
+                        'leave_time' => $leaveTime,
+                        // $paid_unpaid_status == 0 ? : ''
                     ]);
                     if (!$success) {
                         return response()->json(['message' => 'There was some error while sending request', 'stat' => 0]);

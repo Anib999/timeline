@@ -20,7 +20,8 @@
         // console.log();
         // $('#requestDatePicker').val(today.toLocaleDateString())
         // 
-        let minDater = {minDate: -3}
+        let minDater = {minDate: 0}
+        // -3
         // || isAdmin == true
         if(isSuperAdmin == true)
             minDater = {}

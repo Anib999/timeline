@@ -8,6 +8,7 @@ use App\User;
 use App\Position;
 use App\Role;
 use Auth;
+use Validator;
 use Carbon\Carbon;
 
 class UserController extends Controller {
@@ -108,7 +109,7 @@ class UserController extends Controller {
         $user->update([
             'name' => Input::get('name'),
             'email' => Input::get('email'),
-            'password' => bcrypt(Input::get('password')),
+            // 'password' => bcrypt(Input::get('password')),
             'address' => Input::get('address'),
             'phone' => Input::get('phone'),
             'contactPerson' => Input::get('contactPerson'),
@@ -166,4 +167,16 @@ class UserController extends Controller {
         return response()->json($autoU);
     }
 
+    public function changePassword(Request $request, $id) {
+        Validator::make($request->all(),[
+            'password' => 'required|min:6|confirmed'
+        ])->validate();
+        $user = User::find($id);
+
+        $user->update([
+            'password' => bcrypt(Input::get('password')),
+        ]);
+
+        return redirect()->route('user.index')->with('message', 'Password Successfully Changed!');
+    }
 }

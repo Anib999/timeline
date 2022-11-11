@@ -57,6 +57,8 @@ class DayWorkEntryController extends Controller {
                             ->where('PU.user_id', '=', DB::raw($user_id))
                             ->orderBy('projects.created_at', 'asc')
                             ->get();
+        // var_dump($projects->toArray());
+        // exit;
         
         return view('dayWorkHour', compact( 'workDetails', 'totalHour', 'now', 'projects','users'));
     }
@@ -234,15 +236,17 @@ class DayWorkEntryController extends Controller {
         $workDayDate = $request->get('workDayDate');
         $now = Carbon::now('GMT+5:45');
 
+        if($request->get('userId') != null)
+            $user_id = $request->get('userId');
 
         $check_attendence = Attendence::whereRaw('user_id='.$user_id.' AND day="'.$workDayDate.'"')->get();
-
         $workDetailsDeleteStatus = DayWorkEntry::whereRaw("id=$workDetailId")->delete();
         if($workDetailsDeleteStatus == 1){
-            Attendence::whereRaw('user_id='.$user_id.' AND day="'.$workDayDate.'"')
-                ->update([
-                    'total_work_hour' => $check_attendence[0]->total_work_hour - $workHour
-                ]);
+            if(count($check_attendence) > 0)
+                Attendence::whereRaw('user_id='.$user_id.' AND day="'.$workDayDate.'"')
+                    ->update([
+                        'total_work_hour' => $check_attendence[0]->total_work_hour - $workHour
+                    ]);
             return response()->json(['delete'=>true]);
         }else{
             return response()->json(['delete'=>false]);
@@ -255,16 +259,17 @@ class DayWorkEntryController extends Controller {
         $workDate = $request->get('workDate');
         
         $queryUserId = Auth::user()->id;
-        if(Auth::user()->hasRole('AddFieldVisit')){
+        // if(Auth::user()->hasRole('AddFieldVisit')){
             if($request->get('userId') != null)
                 $queryUserId = $request->get('userId');
-
-        }
+        // }
         $workEntries = DayWorkEntry::whereRaw('user_id = ' . $queryUserId.' AND workEntryDate = "'.$workDate.'"')
                 ->with('subCategories')
                 ->with('projects')
                 ->with('WorkDetails')
                 ->get();
+        // var_dump(DayWorkEntry::whereRaw('user_id = ' . $queryUserId.' AND workEntryDate = "'.$workDate.'"')->get()->toArray());
+        // exit;
 
         $table_row = array();
 //dd($workEntries);
@@ -276,10 +281,11 @@ class DayWorkEntryController extends Controller {
                 'projectName' => $workEntry->projects->name,
                 'subCategoryId' => $workEntry->subCategories->id,
                 'subCategoryName' => $workEntry->subCategories->name,
-                'workDetailId' => $workEntry->WorkDetails->id,
-                'workDetailName' => $workEntry->WorkDetails->name,
+                'workDetailId' => $workEntry->workDetail_id != 0 ? $workEntry->WorkDetails->id : 0,
+                'workDetailName' => $workEntry->workDetail_id != 0 ? $workEntry->WorkDetails->name : 'N/A',
                 'workHour' => $workEntry->workHour,
-                'workComment' => $workEntry->workComment
+                'workComment' => $workEntry->workComment,
+                'resUId' => $queryUserId
             );
         }
 
