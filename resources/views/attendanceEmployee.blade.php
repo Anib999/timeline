@@ -11,13 +11,12 @@
     <script type="text/javascript" src="{{ asset('js/bootstrap-datetimepicker.min.js')}}"></script>
     <script src="{{ asset('js/jquery-ui.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset('js/date.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/attendance.js') }}"></script>
     <script type="text/javascript">
         var today = new Date();
         const isSuperAdmin = <?= $userDetail->isSuperAdmin; ?>;
         const isAdmin = <?= $userDetail->isAdmin; ?>;
+        const TIMEDATA = <?= $timeData ?>;
         // request date for request check in/out
-        // console.log();
         // $('#requestDatePicker').val(today.toLocaleDateString())
         // 
         let minDater = {minDate: 0}
@@ -247,6 +246,7 @@
         })();
 
 </script>
+<script type="text/javascript" src="{{ asset('js/attendance.js') }}"></script>
 @endsection
 
 @section('content')

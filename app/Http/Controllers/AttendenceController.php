@@ -14,7 +14,7 @@ use App\LeaveRequest;
 use App\DayWorkEntry;
 use Illuminate\Support\Facades\DB;
 
-class AttendenceController extends Controller {
+class AttendenceController extends AttendanceTimeController {
 
     public function __construct() {
         $this->middleware('auth');
@@ -26,7 +26,7 @@ class AttendenceController extends Controller {
      * @return view
      */
     public function index(Request $request) {
-
+        $timeData = json_encode($this->exportTime());
         //$setting = Setting::where('id', 1)->pluck('check_in_setting_status')->first();
         $setting = Setting::where('setting_name','check_in_without_admin_approval_setting')->pluck('status')->first();
 //var_dump( Carbon::now('GMT+5:45') ); exit;
@@ -68,7 +68,7 @@ class AttendenceController extends Controller {
         $userDetail = Auth::user();
 
         //dd($leaves); exit();
-        return view('attendanceEmployee', compact('attendances', 'already_checkIn', 'already_checkOut', 'requestTypes', 'setting', 'holidays', 'leaves','holidayDays_array', 'userDetail'));
+        return view('attendanceEmployee', compact('attendances', 'already_checkIn', 'already_checkOut', 'requestTypes', 'setting', 'holidays', 'leaves','holidayDays_array', 'userDetail', 'timeData'));
     }
 
     public function show() {

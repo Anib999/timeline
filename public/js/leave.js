@@ -21,14 +21,29 @@
     var from_date = $('#leave_from_date');
     var to_date = $('#leave_to_date');
 
-    from_date.val(today.toLocaleDateString())
-    to_date.val(today.toLocaleDateString())
+    // from_date.val(today.toLocaleDateString())
+    // to_date.val(today.toLocaleDateString())
+
+    from_date.val(formatTodayDateISO())
+    to_date.val(formatTodayDateISO())
+
+    function formatTodayDate() {
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        today = `${yyyy}-${mm}-${dd}`;
+        return today;
+    }
+
+    function formatTodayDateISO() {
+        return today.toISOString().split('T')[0]
+    }
 
     from_date.datepicker({
         dateFormat: 'yy-m-d',
         autoclose: true,
         startDate: "today",
-        minDate: today,
+        // minDate: today,
 		/*minDate: new Date( today.setDate( today.getDate()-7 ) ),*/
         onSelect: function () {
             var from_dat = new Date(from_date.val());
@@ -71,7 +86,7 @@
         dateFormat: 'yy-m-d',
         autoclose: true,
         startDate: "today",
-        minDate: today,
+        // minDate: today,
         onSelect: function () {
             var from_dat = new Date(from_date.val());
             var to_dat = new Date(to_date.val());
@@ -135,8 +150,8 @@
                 // location.reload()
             $('#leaveRequest')[0].reset();
 
-            from_date.val(today.toLocaleDateString())
-            to_date.val(today.toLocaleDateString())
+            from_date.val(formatTodayDateISO())
+            to_date.val(formatTodayDateISO())
         });
 
         response.fail(function (res) {

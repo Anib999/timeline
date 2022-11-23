@@ -504,20 +504,54 @@
             return 1
         }
 
-        const fromEarly = newDateTime.setHours(7, 0, 0, 0);
-        const toEarly = newDateTime.setHours(9, 45, 59, 0);
+        let fromEarly,
+                toEarly,
+                fromLate,
+                toLate,
+                fromFirstHalfLeave,
+                toFirstHalfLeave,
+                fromSecondHalfLeave,
+                toSecondHalfLeave
 
-        const fromLate = newDateTime.setHours(10, 1, 0, 0);
-        const toLate = newDateTime.setHours(10, 30, 59, 0);
-        
-        const fromFirstHalfLeave = newDateTime.setHours(10, 31, 0, 0);
-        const toFirstHalfLeave = newDateTime.setHours(12, 0, 59, 0);
+        if(TIMEDATA != ''){
+            const fromEarlySp = TIMEDATA.fromEarly.split(', ')
+            const toEarlySp = TIMEDATA.toEarly.split(', ')
 
-        const fromSecondHalfLeave = newDateTime.setHours(12, 1, 0, 0);
-        const toSecondHalfLeave = newDateTime.setHours(17, 0, 59, 0);
+            const fromLateSp = TIMEDATA.fromLate.split(', ')
+            const toLateSp = TIMEDATA.toLate.split(', ')
 
-        if(checkInDateTime >= toEarly && checkInDateTime < fromLate) return 10
+            const fromFirstHalfLeaveSp = TIMEDATA.fromFirstHalfLeave.split(', ')
+            const toFirstHalfLeaveSp = TIMEDATA.toFirstHalfLeave.split(', ')
 
+            const fromSecondHalfLeaveSp = TIMEDATA.fromSecondHalfLeave.split(', ')
+            const toSecondHalfLeaveSp = TIMEDATA.toSecondHalfLeave.split(', ')
+
+            fromEarly = newDateTime.setHours(fromEarlySp[0], fromEarlySp[1], fromEarlySp[2], fromEarlySp[3]);
+            toEarly = newDateTime.setHours(toEarlySp[0], toEarlySp[1], toEarlySp[2], toEarlySp[3]);
+
+            fromLate = newDateTime.setHours(fromLateSp[0], fromLateSp[1], fromLateSp[2], fromLateSp[3]);
+            toLate = newDateTime.setHours(toLateSp[0], toLateSp[1], toLateSp[2], toLateSp[3]);
+
+            fromFirstHalfLeave = newDateTime.setHours(fromFirstHalfLeaveSp[0], fromFirstHalfLeaveSp[1], fromFirstHalfLeaveSp[2], fromFirstHalfLeaveSp[3]);
+            toFirstHalfLeave = newDateTime.setHours(toFirstHalfLeaveSp[0], toFirstHalfLeaveSp[1], toFirstHalfLeaveSp[2], toFirstHalfLeaveSp[3]);
+
+            fromSecondHalfLeave = newDateTime.setHours(fromSecondHalfLeaveSp[0], fromSecondHalfLeaveSp[1], fromSecondHalfLeaveSp[2], fromSecondHalfLeaveSp[3]);
+            toSecondHalfLeave = newDateTime.setHours(toSecondHalfLeaveSp[0], toSecondHalfLeaveSp[1], toSecondHalfLeaveSp[2], toSecondHalfLeaveSp[3]);
+        }else{            
+            fromEarly = newDateTime.setHours(7, 0, 0, 0);
+            toEarly = newDateTime.setHours(9, 45, 0, 0);
+            
+            fromLate = newDateTime.setHours(10, 1, 0, 0);
+            toLate = newDateTime.setHours(10, 30, 59, 0);
+            
+            fromFirstHalfLeave = newDateTime.setHours(10, 31, 0, 0);
+            toFirstHalfLeave = newDateTime.setHours(12, 0, 59, 0);
+            
+            fromSecondHalfLeave = newDateTime.setHours(12, 1, 0, 0);
+            toSecondHalfLeave = newDateTime.setHours(17, 0, 59, 0);
+        }
+
+        if(checkInDateTime >= toEarly && checkInDateTime <= fromLate) return 10
         if(checkInDateTime <= fromEarly){
             return 4
         }else if (fromEarly <= checkInDateTime && checkInDateTime <= toEarly) {
